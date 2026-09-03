@@ -1,4 +1,4 @@
-import  { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -109,6 +109,7 @@ export function HorizontalShowcase() {
 
       <div
         ref={trackRef}
+        style={{ willChange: "transform" }}
         className="flex h-full w-max snap-x snap-mandatory overflow-x-auto lg:overflow-visible lg:snap-none"
       >
         {FEATURED.map((p) => (
@@ -116,7 +117,10 @@ export function HorizontalShowcase() {
             key={p.id}
             className="showcase-panel flex h-[70vh] w-[85vw] shrink-0 snap-center items-center justify-center px-6 lg:h-full lg:w-screen lg:px-24"
           >
-            <div className="panel-inner grid w-full max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-2">
+            <div
+              className="panel-inner grid w-full max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-2"
+              style={{ willChange: "transform, opacity" }}
+            >
               <div className="order-2 lg:order-1">
                 <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#84868C]">
                   {p.category}

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -20,13 +20,24 @@ export function Hero() {
   const fgX = useTransform(mvX, [-0.5, 0.5], [12, -12]);
   const fgY = useTransform(mvY, [-0.5, 0.5], [8, -8]);
 
+  const rafId = useRef(null);
+  const pendingEvent = useRef(null);
+
   const handleMove = (e) => {
-    const r = containerRef.current.getBoundingClientRect();
-    mvX.set((e.clientX - r.left) / r.width - 0.5);
-    mvY.set((e.clientY - r.top) / r.height - 0.5);
-    cursorX.set(e.clientX - r.left);
-    cursorY.set(e.clientY - r.top);
+    pendingEvent.current = { x: e.clientX, y: e.clientY };
+    if (rafId.current) return;
+    rafId.current = requestAnimationFrame(() => {
+      const r = containerRef.current.getBoundingClientRect();
+      const { x, y } = pendingEvent.current;
+      mvX.set((x - r.left) / r.width - 0.5);
+      mvY.set((y - r.top) / r.height - 0.5);
+      cursorX.set(x - r.left);
+      cursorY.set(y - r.top);
+      rafId.current = null;
+    });
   };
+
+  useEffect(() => () => rafId.current && cancelAnimationFrame(rafId.current), []);
 
   useGSAP(
     () => {
@@ -48,13 +59,16 @@ export function Hero() {
       onMouseMove={handleMove}
       className="relative h-[100svh] w-full overflow-hidden bg-[#0B0B0C]"
     >
-      <motion.div style={{ x: bgX, y: bgY }} className="pointer-events-none absolute -inset-20 opacity-60">
-        <div className="absolute top-1/4 left-1/4 h-[42vw] w-[42vw] rounded-full bg-[#FF4B1F]/10 blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 h-[30vw] w-[30vw] rounded-full bg-[#84868C]/10 blur-[120px]" />
+      <motion.div
+        style={{ x: bgX, y: bgY, willChange: "transform" }}
+        className="pointer-events-none absolute -inset-20 opacity-60"
+      >
+        <div className="absolute top-1/4 left-1/4 h-[34vw] w-[34vw] rounded-full bg-[#FF4B1F]/10 blur-[80px]" />
+        <div className="absolute bottom-0 right-1/4 h-[24vw] w-[24vw] rounded-full bg-[#84868C]/10 blur-[80px]" />
       </motion.div>
 
       <motion.div
-        style={{ x: midX, y: midY }}
+        style={{ x: midX, y: midY, willChange: "transform" }}
         className="pointer-events-none absolute right-[6%] top-[18%] hidden md:block"
       >
         <div className="hero-fade w-[280px] rotate-3 border border-[#2A2C30] bg-[#101113]/60 p-4 backdrop-blur-sm">
@@ -63,7 +77,7 @@ export function Hero() {
       </motion.div>
 
       <motion.div
-        style={{ x: fgX, y: fgY }}
+        style={{ x: fgX, y: fgY, willChange: "transform" }}
         className="relative z-10 flex h-full w-full flex-col justify-end px-6 pb-24 md:px-10 md:pb-28"
       >
         <p className="hero-fade mb-4 font-mono text-xs uppercase tracking-[0.3em] text-[#84868C]">

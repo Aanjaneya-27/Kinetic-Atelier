@@ -15,7 +15,11 @@ export function Navbar() {
   const borderAlpha = useTransform(scrollY, [0, 140], [0, 1]);
   const borderColor = useTransform(borderAlpha, (v) => `rgba(42,44,48,${v})`);
 
-  const links = ["Footwear", "Apparel", "Lab", "Journal"];
+  const links = [
+    { label: "Shop", href: "#archive" },
+    { label: "Lab", href: "#lab" },
+    { label: "Editorial", href: "#editorial" },
+  ];
 
   return (
     <motion.header
@@ -29,10 +33,13 @@ export function Navbar() {
       <nav className="hidden md:flex items-center gap-1">
         {links.map((l) => (
           <MagneticButton
-            key={l}
+            key={l.label}
+            onClick={() =>
+              document.querySelector(l.href)?.scrollIntoView({ behavior: "smooth" })
+            }
             className="relative px-4 py-2 text-xs font-mono uppercase tracking-[0.15em] text-[#84868C] hover:text-[#ECE9E2] transition-colors"
           >
-            {l}
+            {l.label}
           </MagneticButton>
         ))}
       </nav>

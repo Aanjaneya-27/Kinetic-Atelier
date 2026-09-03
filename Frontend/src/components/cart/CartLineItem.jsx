@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Trash2 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { AnimatedPrice } from "../ui/AnimatedPrice";
 
@@ -64,7 +64,16 @@ export function CartLineItem({ item, index }) {
             </button>
           </div>
         </div>
-        <AnimatedPrice value={item.price * item.qty} className="shrink-0 text-sm text-[#ECE9E2]" />
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <AnimatedPrice value={item.price * item.qty} className="text-sm text-[#ECE9E2]" />
+          <button
+            onClick={() => dispatch({ type: "REMOVE", payload: item.cartId })}
+            aria-label={`Remove ${item.title} from bag`}
+            className="text-[#84868C] transition-colors hover:text-[#FF4B1F]"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   );
